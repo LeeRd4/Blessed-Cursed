@@ -2,31 +2,36 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Blessed Cursed 6</title>
+<title>Whalien</title>
 
 <style>
 body{
   margin:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
   height:100vh;
   background:linear-gradient(#486480,#87efff);
   font-family: Arial, sans-serif;
+  color: 80e2ff;
 }
 
-/* JEU */
+/* Container global */
+#container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  gap: 20px;
+}
+
+/* Règles */
+#rules {
+  font-size: 18px;
+  text-align: center;
+  max-width: 800px;
+}
+/* JEU visible directement */
 #gameContainer {
   display:flex;
-  gap:10px;
-  align-items:center;
-}
-
-.container {
-  background:#87efff55;
-  padding:20px;
-  border-radius:20px;
-  color:white;
 }
 
 canvas{
@@ -37,27 +42,26 @@ canvas{
 </head>
 
 <body>
-
-<!-- GAME -->
-<div id="gameContainer">
-  <div class="container"></div>
-  <canvas id="game"></canvas>
+<div id="container">
+   <div id="rules">
+    <h1>
+       0 à 10 points : vous payez le restau 
+      | 10 à 20 points : vous ramenez les croissants 
+      | 20+ : lien cliqué, dommage</h1>
+  </div>
+  <div id="gameContainer">
+    <canvas id="game"></canvas>
+  </div>
 </div>
-
 <script>
-function startGame() {
-  alert("⚠︎ Score 20 points to get out ⚠︎");
-
-  document.getElementById("login").style.display = "flex";
-  document.getElementById("gameContainer").style.display = "flex";
-
-  initJeu();
-}
+initJeu();
 
 function initJeu() {
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// taille
 canvas.width = Math.min(window.innerWidth * 0.9, 600);
 canvas.height = Math.min(window.innerHeight * 0.9, 800);
 
@@ -76,12 +80,14 @@ let best = 0;
 let timer = 0;
 let running = false;
 
+// effets
 let flipHorizontal = false;
 let rotation = 0;
 let rotationSpeed = 0;
 let effectTimer = 0;
 const EFFECT_INTERVAL = 200;
 
+// effets random
 function randomEffect() {
   let r = Math.random();
   flipHorizontal = false;
@@ -94,6 +100,7 @@ function randomEffect() {
   }
 }
 
+// controls
 function flap(){
   running = true;
   vy = -9;
@@ -102,19 +109,17 @@ function flap(){
 document.addEventListener("keydown", e=>{
   if(e.code==="Space") flap();
 });
+
 canvas.addEventListener("click", flap);
 
+// spawn tuyaux
 function spawnPipe(){
   let margin = 80;
   let gapY = Math.random()*(H-GAP-margin*2)+margin;
-
-  pipes.push({
-    x:W,
-    gapY,
-    passed:false
-  });
+  pipes.push({ x:W, gapY, passed:false });
 }
 
+// reset
 function reset(){
   if(score > best) best = score;
 
@@ -129,11 +134,13 @@ function reset(){
   rotationSpeed = 0;
 }
 
+// boucle
 function loop(){
   requestAnimationFrame(loop);
 
   ctx.save();
 
+  // fond
   let g = ctx.createLinearGradient(0,0,0,H);
   g.addColorStop(0,"#2c3e50");
   g.addColorStop(1,"#87efff");
@@ -161,16 +168,19 @@ function loop(){
     rotationSpeed *= 0.98;
   }
 
+  // transformations
   ctx.translate(W/2, H/2);
   ctx.rotate(rotation);
   if(flipHorizontal) ctx.scale(-1,1);
   ctx.translate(-W/2, -H/2);
 
+  // tuyaux
   pipes.forEach(p=>{
     drawPipe(p.x,0,PIPE_WIDTH,p.gapY);
     drawPipe(p.x,p.gapY+GAP,PIPE_WIDTH,H);
   });
 
+  // joueur
   ctx.fillStyle="white";
   ctx.beginPath();
   ctx.arc(PLAYER_X,y,12,0,Math.PI*2);
@@ -178,6 +188,7 @@ function loop(){
 
   ctx.restore();
 
+  // collisions
   pipes.forEach(p=>{
     if(!p.passed && p.x+PIPE_WIDTH < PLAYER_X){
       p.passed = true;
@@ -194,6 +205,7 @@ function loop(){
 
   pipes = pipes.filter(p=>p.x > -PIPE_WIDTH);
 
+  // HUD
   ctx.fillStyle="#000";
   ctx.font="bold 26px Arial";
 
@@ -206,14 +218,19 @@ function loop(){
 
   ctx.textAlign="right";
   ctx.fillText("Best : "+best, W - 20, 40);
+
+  // message départ
+  if(!running){
+    ctx.fillStyle="white";
+    ctx.textAlign="center";
+    ctx.font="28px Arial";
+     }
 }
 
 function drawPipe(x,y,w,h){
   ctx.fillStyle="#2c3e50";
   ctx.fillRect(x,y,w,h);
   ctx.fillRect(x,y,w,10);
-  ctx.strokeStyle="#231512";
-  ctx.strokeRect(x,y,w,h);
 }
 
 loop();
@@ -222,3 +239,4 @@ loop();
 
 </body>
 </html>
+``
