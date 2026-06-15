@@ -142,8 +142,8 @@ function loop(){
 
   // fond
   let g = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,"#2c3e50");
-  g.addColorStop(1,"#87efff");
+  g.addColorStop(0,"#222021");
+  g.addColorStop(1,"#c30010");
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
 
@@ -181,7 +181,7 @@ function loop(){
   });
 
   // joueur
-  ctx.fillStyle="white";
+  ctx.fillStyle="#ff2c2c";
   ctx.beginPath();
   ctx.arc(PLAYER_X,y,12,0,Math.PI*2);
   ctx.fill();
@@ -228,7 +228,7 @@ function loop(){
 }
 
 function drawPipe(x,y,w,h){
-  ctx.fillStyle="#2c3e50";
+  ctx.fillStyle="#222021";
   ctx.fillRect(x,y,w,h);
   ctx.fillRect(x,y,w,10);
 }
